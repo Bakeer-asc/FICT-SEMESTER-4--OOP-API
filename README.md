@@ -6,25 +6,6 @@ A comprehensive REST API for tracking fitness goals, workouts, nutrition, water 
 
 ---
 
-## Table of Contents
-
-- [Project Overview](#project-overview)
-- [Features](#features)
-- [Technology Stack](#technology-stack)
-- [Installation](#installation)
-- [Database Setup](#database-setup)
-- [Running the Application](#running-the-application)
-- [Authentication Flow](#authentication-flow)
-- [API Endpoints](#api-endpoints)
-- [Role-Based Access Control](#role-based-access-control)
-- [API Documentation](#api-documentation)
-- [Project Structure](#project-structure)
-- [Screenshots](#screenshots)
-- [SDG Relevance](#sdg-relevance)
-- [License](#license)
-
----
-
 ## Project Overview
 
 The Fitness Tracker API allows users to:
@@ -96,8 +77,8 @@ The system implements **Role-Based Access Control (RBAC)** with `admin` and `use
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/fitness-tracker-api.git
-cd fitness-tracker-api
+git https://github.com/Bakeer-asc/FICT-SEMESTER-4--OOP-API
+cd fitness_tracker_api
 ```
 
 ### Step 2: Create Virtual Environment
@@ -121,17 +102,6 @@ pip install -r requirements.txt
 ### Step 4: Configure Environment Variables
 
 Create a `.env` file in the project root:
-
-```env
-DATABASE_URL=postgresql://postgres:yourpassword@localhost:5432/fitness_tracker
-SECRET_KEY=your-super-secret-jwt-key-change-this-in-production
-ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=30
-```
-
-> ⚠️ **Important**: Change `SECRET_KEY` to a strong random string in production!
-
----
 
 ## Database Setup
 
@@ -333,52 +303,6 @@ Both documentations include:
 
 ---
 
-## Project Structure
-
-```
-fitness-tracker-api/
-│
-├── main.py                 # FastAPI application entry point
-├── database.py             # SQLAlchemy database configuration
-├── models.py               # SQLAlchemy ORM models (6 tables)
-├── schemas.py              # Pydantic validation schemas
-├── auth.py                 # JWT authentication & password hashing
-├── dependencies.py         # Custom dependency injection functions
-├── utils.py                # Utility/helper functions
-│
-├── routers/
-│   ├── auth_router.py      # Authentication endpoints (register/login)
-│   ├── goals_router.py     # Fitness goals CRUD
-│   ├── workout_router.py   # Workout tracking CRUD
-│   ├── nutrition_router.py # Nutrition logging CRUD
-│   ├── water_router.py     # Water intake CRUD
-│   └── progress_router.py  # Progress reports & admin endpoints
-│
-├── requirements.txt        # Python dependencies
-├── .env                    # Environment variables (not in git)
-├── .gitignore              # Git ignore rules
-├── README.md               # This documentation
-└── LICENSE                 # MIT License
-```
-
----
-
-## Screenshots
-
-### Swagger UI Documentation
-
-![Swagger UI](https://via.placeholder.com/800x400?text=Swagger+UI+Screenshot)
-
-### ReDoc Documentation
-
-![ReDoc](https://via.placeholder.com/800x400?text=ReDoc+Screenshot)
-
-### Authentication Flow
-
-![Auth Flow](https://via.placeholder.com/800x400?text=OAuth2+Password+Flow)
-
----
-
 ## SDG Relevance
 
 ### SDG 3: Good Health and Well-Being
@@ -400,56 +324,3 @@ This Fitness Tracker API directly contributes to **Sustainable Development Goal 
 > _"Ensuring healthy lives and promoting well-being for all at all ages is essential to sustainable development."_ — United Nations
 
 ---
-
-## License
-
-This project is licensed under the **MIT License**.
-
-```
-MIT License
-
-Copyright (c) 2024 Fitness Tracker API Team
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
----
-
-## Contributing
-
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
----
-
-## Contact
-
-For questions or support:
-
-- **Email**: support@fitnesstracker.sl
-- **GitHub Issues**: [github.com/yourusername/fitness-tracker-api/issues](https://github.com/yourusername/fitness-tracker-api/issues)
-
----
-
-**Built with ❤️ for the Object-Oriented Programming Course**
