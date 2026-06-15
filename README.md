@@ -1,0 +1,455 @@
+# Fitness Tracker API
+
+A comprehensive REST API for tracking fitness goals, workouts, nutrition, water intake, and weight progress. Built with **FastAPI**, **SQLAlchemy**, **PostgreSQL**, and **JWT Authentication**.
+
+> **SDG 3 - Good Health and Well-Being**: This project supports healthy lifestyles in Sierra Leone by empowering individuals to monitor their physical health, nutrition, and fitness through digital tools.
+
+---
+
+## Table of Contents
+
+- [Project Overview](#project-overview)
+- [Features](#features)
+- [Technology Stack](#technology-stack)
+- [Installation](#installation)
+- [Database Setup](#database-setup)
+- [Running the Application](#running-the-application)
+- [Authentication Flow](#authentication-flow)
+- [API Endpoints](#api-endpoints)
+- [Role-Based Access Control](#role-based-access-control)
+- [API Documentation](#api-documentation)
+- [Project Structure](#project-structure)
+- [Screenshots](#screenshots)
+- [SDG Relevance](#sdg-relevance)
+- [License](#license)
+
+---
+
+## Project Overview
+
+The Fitness Tracker API allows users to:
+
+- **Register** secure accounts with bcrypt-hashed passwords
+- **Login** using JWT token-based authentication (OAuth2 Password Flow)
+- **Manage Fitness Goals** with target values and deadlines
+- **Track Workouts** including duration, type, and calories burned
+- **Log Nutrition** with detailed macronutrient tracking
+- **Monitor Water Intake** for daily hydration goals
+- **Record Weight Progress** over time
+- **Generate Progress Reports** with completion statistics
+
+The system implements **Role-Based Access Control (RBAC)** with `admin` and `user` roles, ensuring data privacy and secure endpoint protection.
+
+---
+
+## Features
+
+### Core Features
+
+- ✅ JWT Authentication with OAuth2 Password Flow
+- ✅ Password Hashing using Passlib Bcrypt
+- ✅ Role-Based Authorization (Admin / User)
+- ✅ Dependency Injection with FastAPI `Depends()`
+- ✅ Full CRUD for all fitness tracking entities
+- ✅ Comprehensive Progress Reports
+- ✅ Interactive API Documentation (Swagger & ReDoc)
+- ✅ CORS enabled for frontend integration
+- ✅ PostgreSQL database with SQLAlchemy ORM
+- ✅ Input validation with Pydantic schemas
+- ✅ HTTP status code compliance (200, 201, 400, 401, 403, 404)
+
+### Security Features
+
+- 🔐 Bcrypt password hashing (never store plain passwords)
+- 🔐 JWT token expiration (30 minutes default)
+- 🔐 OAuth2 Bearer token authentication
+- 🔐 Protected routes with dependency injection
+- 🔐 Admin-only endpoint restrictions (403 Forbidden for non-admins)
+
+---
+
+## Technology Stack
+
+| Technology    | Purpose               | Version |
+| ------------- | --------------------- | ------- |
+| Python        | Programming Language  | 3.12+   |
+| FastAPI       | Web Framework         | 0.111.0 |
+| Uvicorn       | ASGI Server           | 0.30.0  |
+| SQLAlchemy    | ORM                   | 2.0.30  |
+| PostgreSQL    | Database              | 14+     |
+| Psycopg2      | PostgreSQL Driver     | 2.9.9   |
+| Pydantic      | Data Validation       | 2.7.4   |
+| python-jose   | JWT Implementation    | 3.3.0   |
+| Passlib       | Password Hashing      | 1.7.4   |
+| python-dotenv | Environment Variables | 1.0.1   |
+
+---
+
+## Installation
+
+### Prerequisites
+
+- Python 3.12 or higher
+- PostgreSQL 14 or higher
+- pip (Python package manager)
+
+### Step 1: Clone the Repository
+
+```bash
+git clone https://github.com/yourusername/fitness-tracker-api.git
+cd fitness-tracker-api
+```
+
+### Step 2: Create Virtual Environment
+
+```bash
+python -m venv venv
+
+# On Windows
+venv\Scripts\activate
+
+# On macOS/Linux
+source venv/bin/activate
+```
+
+### Step 3: Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### Step 4: Configure Environment Variables
+
+Create a `.env` file in the project root:
+
+```env
+DATABASE_URL=postgresql://postgres:yourpassword@localhost:5432/fitness_tracker
+SECRET_KEY=your-super-secret-jwt-key-change-this-in-production
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+```
+
+> ⚠️ **Important**: Change `SECRET_KEY` to a strong random string in production!
+
+---
+
+## Database Setup
+
+### Step 1: Create PostgreSQL Database
+
+```bash
+# Login to PostgreSQL
+psql -U postgres
+
+# Create database
+CREATE DATABASE fitness_tracker;
+
+# Exit
+\q
+```
+
+### Step 2: Tables Auto-Creation
+
+Tables are automatically created when the application starts via SQLAlchemy's `Base.metadata.create_all()`.
+
+### Manual Table Creation (Optional)
+
+If you prefer manual setup, you can run:
+
+```bash
+python -c "from database import engine, Base; Base.metadata.create_all(bind=engine)"
+```
+
+---
+
+## Running the Application
+
+### Development Mode
+
+```bash
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+### Production Mode
+
+```bash
+uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
+```
+
+### Access the API
+
+- **API Base URL**: `http://localhost:8000`
+- **Swagger UI**: `http://localhost:8000/docs`
+- **ReDoc**: `http://localhost:8000/redoc`
+- **Health Check**: `http://localhost:8000/health`
+
+---
+
+## Authentication Flow
+
+### 1. Register a New User
+
+```bash
+curl -X POST "http://localhost:8000/auth/register" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "john_doe",
+    "email": "john@example.com",
+    "password": "securepassword123"
+  }'
+```
+
+### 2. Login to Get JWT Token
+
+```bash
+curl -X POST "http://localhost:8000/auth/login" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "username=john_doe&password=securepassword123"
+```
+
+**Response:**
+
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "bearer"
+}
+```
+
+### 3. Access Protected Endpoints
+
+Include the token in the Authorization header:
+
+```bash
+curl -X GET "http://localhost:8000/workouts/" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+---
+
+## API Endpoints
+
+### Authentication
+
+| Method | Endpoint         | Description             | Auth Required |
+| ------ | ---------------- | ----------------------- | ------------- |
+| POST   | `/auth/register` | Register new user       | No            |
+| POST   | `/auth/login`    | Login and get JWT token | No            |
+
+### Fitness Goals
+
+| Method | Endpoint      | Description             | Auth Required |
+| ------ | ------------- | ----------------------- | ------------- |
+| POST   | `/goals/`     | Create new fitness goal | Yes           |
+| GET    | `/goals/`     | List all goals          | Yes           |
+| GET    | `/goals/{id}` | Get specific goal       | Yes           |
+| PUT    | `/goals/{id}` | Update goal             | Yes           |
+| DELETE | `/goals/{id}` | Delete goal             | Yes           |
+
+### Workouts
+
+| Method | Endpoint         | Description          | Auth Required |
+| ------ | ---------------- | -------------------- | ------------- |
+| POST   | `/workouts/`     | Create workout       | Yes           |
+| GET    | `/workouts/`     | List all workouts    | Yes           |
+| GET    | `/workouts/{id}` | Get specific workout | Yes           |
+| PUT    | `/workouts/{id}` | Update workout       | Yes           |
+| DELETE | `/workouts/{id}` | Delete workout       | Yes           |
+
+### Nutrition
+
+| Method | Endpoint          | Description             | Auth Required |
+| ------ | ----------------- | ----------------------- | ------------- |
+| POST   | `/nutrition/`     | Create nutrition log    | Yes           |
+| GET    | `/nutrition/`     | List all nutrition logs | Yes           |
+| PUT    | `/nutrition/{id}` | Update nutrition log    | Yes           |
+| DELETE | `/nutrition/{id}` | Delete nutrition log    | Yes           |
+
+### Water Tracking
+
+| Method | Endpoint      | Description         | Auth Required |
+| ------ | ------------- | ------------------- | ------------- |
+| POST   | `/water/`     | Create water log    | Yes           |
+| GET    | `/water/`     | List all water logs | Yes           |
+| PUT    | `/water/{id}` | Update water log    | Yes           |
+| DELETE | `/water/{id}` | Delete water log    | Yes           |
+
+### Progress Reports
+
+| Method | Endpoint                | Description            | Auth Required    |
+| ------ | ----------------------- | ---------------------- | ---------------- |
+| GET    | `/progress/`            | Get progress report    | Yes              |
+| GET    | `/progress/admin/users` | [Admin] List all users | Yes (Admin only) |
+
+---
+
+## Role-Based Access Control
+
+### User Roles
+
+- **user**: Standard user with access to own data only
+- **admin**: Full system access including user management
+
+### Admin-Only Endpoints
+
+The following endpoints require `role=admin`:
+
+- `GET /progress/admin/users` - Returns 403 Forbidden for non-admin users
+
+### Creating an Admin User
+
+Currently, admin users must be created directly in the database or by modifying the role after registration:
+
+```sql
+UPDATE users SET role = 'admin' WHERE username = 'john_doe';
+```
+
+---
+
+## API Documentation
+
+### Swagger UI
+
+Interactive API documentation with try-it-out functionality:
+
+```
+http://localhost:8000/docs
+```
+
+### ReDoc
+
+Alternative API documentation with clean layout:
+
+```
+http://localhost:8000/redoc
+```
+
+Both documentations include:
+
+- Request/response schemas with examples
+- Authentication requirements
+- Endpoint descriptions
+- HTTP status codes
+
+---
+
+## Project Structure
+
+```
+fitness-tracker-api/
+│
+├── main.py                 # FastAPI application entry point
+├── database.py             # SQLAlchemy database configuration
+├── models.py               # SQLAlchemy ORM models (6 tables)
+├── schemas.py              # Pydantic validation schemas
+├── auth.py                 # JWT authentication & password hashing
+├── dependencies.py         # Custom dependency injection functions
+├── utils.py                # Utility/helper functions
+│
+├── routers/
+│   ├── auth_router.py      # Authentication endpoints (register/login)
+│   ├── goals_router.py     # Fitness goals CRUD
+│   ├── workout_router.py   # Workout tracking CRUD
+│   ├── nutrition_router.py # Nutrition logging CRUD
+│   ├── water_router.py     # Water intake CRUD
+│   └── progress_router.py  # Progress reports & admin endpoints
+│
+├── requirements.txt        # Python dependencies
+├── .env                    # Environment variables (not in git)
+├── .gitignore              # Git ignore rules
+├── README.md               # This documentation
+└── LICENSE                 # MIT License
+```
+
+---
+
+## Screenshots
+
+### Swagger UI Documentation
+
+![Swagger UI](https://via.placeholder.com/800x400?text=Swagger+UI+Screenshot)
+
+### ReDoc Documentation
+
+![ReDoc](https://via.placeholder.com/800x400?text=ReDoc+Screenshot)
+
+### Authentication Flow
+
+![Auth Flow](https://via.placeholder.com/800x400?text=OAuth2+Password+Flow)
+
+---
+
+## SDG Relevance
+
+### SDG 3: Good Health and Well-Being
+
+This Fitness Tracker API directly contributes to **Sustainable Development Goal 3** by:
+
+1. **Promoting Physical Activity**: Users can track workouts and set fitness goals, encouraging regular exercise.
+
+2. **Nutrition Awareness**: Detailed nutrition logging helps users make informed dietary choices.
+
+3. **Hydration Monitoring**: Water tracking is especially critical in tropical climates like Sierra Leone where proper hydration prevents heat-related illnesses.
+
+4. **Health Data Accessibility**: Digital health tracking makes fitness monitoring accessible to university students and communities.
+
+5. **Preventive Health**: By monitoring weight and fitness progress, users can identify health trends early.
+
+6. **Community Health**: Aggregate data can inform public health initiatives in Sierra Leone.
+
+> _"Ensuring healthy lives and promoting well-being for all at all ages is essential to sustainable development."_ — United Nations
+
+---
+
+## License
+
+This project is licensed under the **MIT License**.
+
+```
+MIT License
+
+Copyright (c) 2024 Fitness Tracker API Team
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+---
+
+## Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+---
+
+## Contact
+
+For questions or support:
+
+- **Email**: support@fitnesstracker.sl
+- **GitHub Issues**: [github.com/yourusername/fitness-tracker-api/issues](https://github.com/yourusername/fitness-tracker-api/issues)
+
+---
+
+**Built with ❤️ for the Object-Oriented Programming Course**
